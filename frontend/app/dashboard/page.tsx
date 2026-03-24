@@ -5,6 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { DollarSign, Clock, Folder, CheckCircle2, TrendingUp } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { DashboardStatsSkeleton } from '@/components/ui/loading-skeletons';
+import { Skeleton } from '@/components/ui/skeleton';
 
 export default function DashboardPage() {
   const { stats, recentActivity, loading } = useDashboardData();
@@ -25,7 +26,7 @@ export default function DashboardPage() {
           <CardContent>
             <div className="space-y-4">
               {[1, 2, 3].map((i) => (
-                <div key={i} className="h-10 bg-gray-100 rounded animate-pulse" />
+                <Skeleton key={i} className="h-10 w-full" />
               ))}
             </div>
           </CardContent>
