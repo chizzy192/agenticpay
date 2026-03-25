@@ -5,7 +5,7 @@ import { Project, Milestone } from '../types';
 
 export const useAgenticPay = () => {
     const { writeContract, data: hash, isPending, error } = useWriteContract();
-    const { address } = useAccount();
+    const { address, isConnecting, isReconnecting } = useAccount();
 
     const { isLoading: isConfirming, isSuccess: isConfirmed } = useWaitForTransactionReceipt({
         hash,
@@ -77,7 +77,7 @@ export const useAgenticPay = () => {
     // -- Data Fetching Hooks --
 
     const useUserProjects = () => {
-        const { data: clientProjects, isLoading: loadingClient } = useReadContract({
+        const { data: clientProjects, isLoading: loadingClient, isFetching: fetchingClient } = useReadContract({
             address: CONTRACT_ADDRESS,
             abi: CONTRACT_ABI,
             functionName: 'getClientProjects',
@@ -85,7 +85,7 @@ export const useAgenticPay = () => {
             query: { enabled: !!address }
         });
 
-        const { data: freelancerProjects, isLoading: loadingFreelancer } = useReadContract({
+        const { data: freelancerProjects, isLoading: loadingFreelancer, isFetching: fetchingFreelancer } = useReadContract({
             address: CONTRACT_ADDRESS,
             abi: CONTRACT_ABI,
             functionName: 'getFreelancerProjects',
@@ -100,13 +100,14 @@ export const useAgenticPay = () => {
         // Deduplicate
         const uniqueIds = Array.from(new Set(allIds.map(id => id.toString()))).map(id => BigInt(id));
 
-        const { data: projectsData, isLoading: loadingDetails } = useReadContracts({
+        const { data: projectsData, isLoading: loadingDetails, isFetching: fetchingDetails } = useReadContracts({
             contracts: uniqueIds.map(id => ({
                 address: CONTRACT_ADDRESS,
                 abi: CONTRACT_ABI,
                 functionName: 'getProject',
                 args: [id]
-            }))
+            })),
+            query: { enabled: !!address && uniqueIds.length > 0 }
         });
 
         const formattedProjects: Project[] = projectsData
@@ -118,7 +119,12 @@ export const useAgenticPay = () => {
             }).filter((p: any) => p !== null) as Project[]
             : [];
 
-        return { projects: formattedProjects, loading: loadingClient || loadingFreelancer || loadingDetails };
+        const isWalletHydrating = isConnecting || isReconnecting;
+        const isProjectListsFetching = loadingClient || loadingFreelancer || fetchingClient || fetchingFreelancer;
+        const isDetailFetching = uniqueIds.length > 0 && (loadingDetails || fetchingDetails);
+        const loading = !!address && (isWalletHydrating || isProjectListsFetching || isDetailFetching);
+
+        return { projects: formattedProjects, loading };
     };
 
     const useProjectDetail = (projectId: string) => {

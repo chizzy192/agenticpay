@@ -1,6 +1,5 @@
 import { useAgenticPay } from '@/lib/hooks/useAgenticPay';
 import { useAccount } from 'wagmi';
-import { formatEther } from 'viem';
 
 // Define return types for the dashboard data
 export interface DashboardStats {
@@ -34,11 +33,12 @@ export interface DashboardPayment {
 }
 
 export function useDashboardData() {
-    const { address } = useAccount();
+    const { address, isConnected, isConnecting, isReconnecting } = useAccount();
     const { useUserProjects } = useAgenticPay();
     const { projects, loading } = useUserProjects();
+    const isLoading = isConnecting || isReconnecting || (isConnected && loading);
 
-    if (loading || !projects) {
+    if (isLoading || !projects) {
         return {
             stats: { totalEarnings: '0', pendingPayments: '0', activeProjects: 0, completedProjects: 0 },
             invoices: [],
