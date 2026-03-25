@@ -2,7 +2,7 @@
 
 import { useDashboardData } from '@/lib/hooks/useDashboardData';
 import { Card, CardContent } from '@/components/ui/card';
-import { CheckCircle2, Clock, XCircle, ExternalLink, Wallet } from 'lucide-react';
+import { CheckCircle2, Clock, XCircle, ExternalLink, Wallet, Loader2 } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { PaymentCardSkeleton } from '@/components/ui/loading-skeletons';
 import { EmptyState } from '@/components/empty/EmptyState';
@@ -29,6 +29,10 @@ export default function PaymentsPage() {
         <div>
           <h1 className="text-3xl font-bold text-gray-900">Payment History</h1>
           <p className="text-gray-600 mt-1">View all your payment transactions</p>
+          <div className="mt-2 inline-flex items-center gap-2 text-sm text-gray-500">
+            <Loader2 className="h-4 w-4 animate-spin" />
+            Loading payments...
+          </div>
         </div>
         <div className="space-y-4">
           {[1, 2, 3, 4].map((i) => (

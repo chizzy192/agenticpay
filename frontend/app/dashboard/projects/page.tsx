@@ -25,6 +25,10 @@ export default function ProjectsPage() {
           <div>
             <h1 className="text-3xl font-bold text-gray-900">Projects</h1>
             <p className="text-gray-600 mt-1">Manage your projects and milestones</p>
+            <div className="mt-2 inline-flex items-center gap-2 text-sm text-gray-500">
+              <Loader2 className="h-4 w-4 animate-spin" />
+              Loading projects...
+            </div>
           </div>
           <Skeleton className="h-10 w-32" />
         </div>
