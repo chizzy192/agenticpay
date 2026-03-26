@@ -68,7 +68,7 @@ export function useDashboardData() {
             // Active
             activeProjects++;
             if (isFreelancer) {
-                // pending
+                pendingPayments += BigInt(project.rawAmount || 0);
             }
         }
 
@@ -113,8 +113,8 @@ export function useDashboardData() {
 
     return {
         stats: {
-            totalEarnings: '0', // Placeholder until we fix rawAmount
-            pendingPayments: '0',
+            totalEarnings: formatEther(totalEarnings),
+            pendingPayments: formatEther(pendingPayments),
             activeProjects,
             completedProjects
         },
